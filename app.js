@@ -3,6 +3,7 @@ const config = require('config')
 const path = require('path')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const https = require('https')
 
 const app = express()
 
@@ -29,7 +30,12 @@ const start = async () => {
             useUnifiedTopology: true,
             useCreateIndex: true
         })
+        const options = {
+            cert: fs.readFileSync('./sslcert/fullchain.pem'),
+            key: fs.readFileSync('./sslcert/privkey.pem')
+        };
         app.listen(PORT, () => console.log(`App has been started on port ${PORT}...`))
+        https.createServer(options, app).listen(8443);
     } catch (error) {
         console.log('Server error', error.message)
         process.exit(1)
