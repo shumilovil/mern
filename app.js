@@ -35,7 +35,7 @@ const start = async () => {
             key: fs.readFileSync('./sslcert/privkey.pem')
         };
         app.listen(PORT, () => console.log(`App has been started on port ${PORT}...`))
-        https.createServer(options, app).listen(8443);
+        https.createServer(options, app).listen(443);
     } catch (error) {
         console.log('Server error', error.message)
         process.exit(1)
