@@ -10,7 +10,7 @@ const app = express()
 
 app.use(cors())
 app.use ((req, res, next) => {
-    console.log('secure', secure)
+    console.log('secure', req.secure)
     if (req.secure) {
             // request was via https, so do no special handling
             next();
