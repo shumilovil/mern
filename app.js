@@ -9,15 +9,18 @@ const fs = require('fs')
 const app = express()
 
 app.use(cors())
-app.use ((req, res, next) => {
-    console.log('secure', req.secure)
-    if (req.secure) {
+app.use((req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        console.log('secure', req.secure)
+        if (req.secure) {
             // request was via https, so do no special handling
             next();
-    } else {
+        } else {
             // request was via http, so redirect to https
             res.redirect('https://' + req.headers.host + req.url);
-    }
+        }
+    } else next();
+
 });
 app.use(express.json({ extended: true }))
 app.use('/api/auth', require('./routes/auth.routes'))
@@ -46,7 +49,7 @@ const start = async () => {
             key: fs.readFileSync('./sslcert/privkey.pem')
         };
         app.listen(PORT, () => console.log(`App has been started on port ${PORT}...`))
-        https.createServer(options, app).listen(443);
+        if (process.env.NODE_ENV === 'production') https.createServer(options, app).listen(443);
     } catch (error) {
         console.log('Server error', error.message)
         process.exit(1)
